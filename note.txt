@@ -1,0 +1,54 @@
+时光穿梭机
+1.git文件基本操作
+1.1git的init、add、commit
+新建一个git仓库可以使用git init命令。 git status 可以查看当前工作区状态， git diff 可以查看文本修改的内容。将文件添加到仓库使用两个命令，首先使用git add命令将文件添加在仓库，使用git commit命令可以将文件提交到仓库。（git commit -m “文件修改备注”）。git的commit可以一次commit好多文件，所以可以git add 好多文件后，在用git commit 一次统一推送。
+1.2 git的status、diff
+git status可以显示当前仓库的状态。
+git diff 可以显示缓存区当前文件与版本库上一个版本文件的差别。例如git diff readme.txt
+如果git status 显示文件被修改过，使用git diff 可以查看修改内容。
+1.3 git的log、reset
+用git log可以查看git版本从最近到最远的修改历史。
+用git log --pretty=oneline 可以简化git log命令的输出显示，只显示一行。
+git中用HEAD表示当前版本，上一个版本是HEAD^，上上一个版本是HEAD^^,前100个版本是可以写成HEAD~100.
+使用git reset命令可以把当前版本会退到上一个版本，git reset --hard HEAD^.如果想要恢复前一个版本，可以使用git reset --hard 前一个版本的commit id。使用git reset --hard commit_id 可以回到该commit_id对应的版本状态去。
+git reflog可以显示git所有操作过的命令。可以通过这个命令找到以前操作过的版本id，重新进行版本回滚。
+2.git文件的工作区与暂存区
+git的工作区是git所在的文件夹，文件夹里的.git文件夹是git的版本库，git的版本库包括暂存区（stage）与分支（master）两部分，git add命令将改变的文件添加到暂存区，git commit命令将暂存区的文件添加到分支。
+3.git文件的修改
+一个版本修改后，必须用git add先将文件存储到暂存区，然后在git commit 进行提交，否则，不add直接commit，新修改的文件版本不会被存入分支。git diff HEAD --readme.txt可以查看工作区和版本库中最新版本的区别。
+4.撤销修改
+当要撤销在文件工作区进行的修改时，需要输入git checkout -- filename ，就可以把修改后的文件还原到上一状态。--很重要，如果没有--就变成切换到另一分支。如果文件从工作区检入到暂存区后，需要使用git reset HEAD filename将文件从暂存区检出，然后使用git checkout -- filename 将文件恢复到上一版本。
+5.git文件的删除
+从工作区删除一个文件使用rm，如果一个文件从工作区删除后，使用git status命令就会告诉你哪些问件被删除了，如果真的想删除，使用git rm filename  然后使用git commit -m “删除原因备注”  进行提交，就可以把该文件从版本库中删除。
+如果文件从工作区删除后，想回复，可以使用 git checkout -- filename 命令将版本库中的文件恢复到工作区。
+二.远程仓库
+1.添加远程库
+登录GitHub，要在一台电脑上远程连接github，必须先生成在这台电脑上的SSH KEY，生成方法是使用ssh-keygen -t ras -C “youremail@example.com”，将生成的.ssh文件夹中的id_ras.pub中的内容拷贝到GitHub中。然后在右上角找到Create anew repo按钮，创建一个新的仓库，然后在本地learngit仓库下运行命令git remote add origin git@github.com：huanhuahua/learngit.git。添加后，远程库的名字就叫origin，这是git默认的名字，也可以修改，添加完成后，可以使用git push -u origin master。第一次添加使用-u参数，将远程库与本地库关联在一起，以后推送直接使用git push origin master就可以。
+2.从远程库克隆
+git  colne git@github.com：huanhuahua/gitskills.git 用于从远程库将gitskills分支拷贝到本地。
+因为git支持多种协议，还可以使用https：//github.com/huanhuahua/gitskills.git命令。
+3.创建与合并分支
+用git checkout -b dev可以创建dev分支。git checkout 命令加上-b参数表示创建并切换的意思。
+git branch命令用于产看当前分支。gitbranch命令会列出所用分支，当前分支前面会有一个*。使用git      merge +分支名 可以把一个分支合并到master分支上。合并完成后，可以使用git branch -d +分支名将分支删除。
+4.常用分支命令
+Git鼓励大量使用分支：
+查看分支：git branch
+创建分支：git branch <name>
+切换分支：git checkout <name>
+创建+切换分支：git checkout -b <name>
+合并某分支到当前分支：git merge <name>
+删除分支：git branch -d <name>
+5.解决冲突
+当在一个分支中修改了一个文件，在另一个分支中也修改了同一个文件，但两个文件修改的内容不一样。当药合并这两个分支时，就会发生冲突，导致合并分支不成功。这是 使用 git status命令可以查看冲突的文件，直接使用vim打开文件会看到两个文件冲突的地方。文件内容如图所示：
+
+
+ 
+修改
+文件冲突的地方，并再次使用git add 与git commit 两个命令提交，分支提交成功。使用git branch -d branchname 命令就可以把其中一个合并完的分支删除。
+使用git log --graph 命令可以看到分支合并图。
+
+6.分支管理策略
+修复bug可以通过创建bug分支进行，如果手头工作没有做完，可以使用git stash命令将手头工作暂存起来，完成完成紧急的bug修复后，在使用git stash pop将暂存的工作恢复。git stash list 可以查看暂存的工作列表。
+7.feature分支
+添加新功能最好重新创建一个feature分支，开发完成后，将该分支merge到master分支。如果要删除一个没有merge的分支，可以使用git branch -D branchname。
+
