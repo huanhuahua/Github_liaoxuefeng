@@ -1,0 +1,1 @@
+1.当使用git push origin master命令远程同步内容时，gitbash显示everything up-to-date 而远程仓库没有同步成功时，这是需要将该分支下的内容 使用 git add 与git commit命令提交一下，然后使用git push origin master命令就可以成功同步了。
