@@ -1,4 +1,4 @@
-时光穿梭机
+﻿一.时光穿梭机
 1.git文件基本操作
 1.1git的init、add、commit
 新建一个git仓库可以使用git init命令。 git status 可以查看当前工作区状态， git diff 可以查看文本修改的内容。将文件添加到仓库使用两个命令，首先使用git add命令将文件添加在仓库，使用git commit命令可以将文件提交到仓库。（git commit -m “文件修改备注”）。git的commit可以一次commit好多文件，所以可以git add 好多文件后，在用git commit 一次统一推送。
@@ -22,14 +22,16 @@ git的工作区是git所在的文件夹，文件夹里的.git文件夹是git的�
 从工作区删除一个文件使用rm，如果一个文件从工作区删除后，使用git status命令就会告诉你哪些问件被删除了，如果真的想删除，使用git rm filename  然后使用git commit -m “删除原因备注”  进行提交，就可以把该文件从版本库中删除。
 如果文件从工作区删除后，想回复，可以使用 git checkout -- filename 命令将版本库中的文件恢复到工作区。
 二.远程仓库
-1.添加远程库
+2.1创建SSH Key
+如果机器上没有.ssh文件夹，需要先创建本机的ssh文件。在gitbash下输入ssh-keygen -t ras -C ”youremail@example.com“，创建完成后，把id_isa.pub拷贝到github上。就可以在本机远程操作GitHub了。
+2.2添加远程仓库
 登录GitHub，要在一台电脑上远程连接github，必须先生成在这台电脑上的SSH KEY，生成方法是使用ssh-keygen -t ras -C “youremail@example.com”，将生成的.ssh文件夹中的id_ras.pub中的内容拷贝到GitHub中。然后在右上角找到Create anew repo按钮，创建一个新的仓库，然后在本地learngit仓库下运行命令git remote add origin git@github.com：huanhuahua/learngit.git。添加后，远程库的名字就叫origin，这是git默认的名字，也可以修改，添加完成后，可以使用git push -u origin master。第一次添加使用-u参数，将远程库与本地库关联在一起，以后推送直接使用git push origin master就可以。
-2.从远程库克隆
+2.3从远程库克隆
 git  colne git@github.com：huanhuahua/gitskills.git 用于从远程库将gitskills分支拷贝到本地。
 因为git支持多种协议，还可以使用https：//github.com/huanhuahua/gitskills.git命令。
-3.创建与合并分支
+2.4创建与合并分支
 用git checkout -b dev可以创建dev分支。git checkout 命令加上-b参数表示创建并切换的意思。
-git branch命令用于产看当前分支。gitbranch命令会列出所用分支，当前分支前面会有一个*。使用git      merge +分支名 可以把一个分支合并到master分支上。合并完成后，可以使用git branch -d +分支名将分支删除。
+git branch命令用于产看当前分支。git branch命令会列出所用分支，当前分支前面会有一个*。切换到master分支使用命令git checkout master命令。使用git      merge +分支名 可以把一个分支合并到master分支上。合并完成后，可以使用git branch -d +分支名将分支删除。
 4.常用分支命令
 Git鼓励大量使用分支：
 查看分支：git branch
@@ -45,10 +47,24 @@ Git鼓励大量使用分支：
  
 修改
 文件冲突的地方，并再次使用git add 与git commit 两个命令提交，分支提交成功。使用git branch -d branchname 命令就可以把其中一个合并完的分支删除。
-使用git log --graph 命令可以看到分支合并图。
+使用git log --graph 命令可以看到分支合并图，git log --graph --pretty=oneline 可以一行一行的显示合并分支图标 。
+合并分支
+合并分支时，git有时候默认使用fast forward模式，但这种模式下，删除分支后，会丢掉分支信息。若果强制禁用fast forward模式，git就会在merge的时候生成一个新的commit，这样，从分支历史上就可以看出分支信息。形如 git merge --no-ff -m ‘merge with no-ff’ dev
 
 6.分支管理策略
 修复bug可以通过创建bug分支进行，如果手头工作没有做完，可以使用git stash命令将手头工作暂存起来，完成完成紧急的bug修复后，在使用git stash pop将暂存的工作恢复。git stash list 可以查看暂存的工作列表。
 7.feature分支
 添加新功能最好重新创建一个feature分支，开发完成后，将该分支merge到master分支。如果要删除一个没有merge的分支，可以使用git branch -D branchname。
-
+8.查看远程仓库
+查看远程仓库使用git remote命令。显示更详细的信息使用git remote -v命令。
+9.推送分支到远程仓库
+git push origin master 推送本地master分支到远程的origin仓库。
+10.远程修改分支
+待补充
+三.标签管理
+1.创建标签
+git tag v1.0可以创建标签。使用git tag命令可以查看标签列表。git tag 默认打在最新提交的commit上，如果要打到一千的commit上，可以使用 git tag v0.9 commit id 来指定选定的commit。使用git tag只能查看标签列表，使用git show tagname 可以查看标签信息。使用 git tag -a ‘tag name' -m ’tag   release' commit id 指定标签名字和标签说明。
+2.标签输出
+如果标签打错了，可以使用 git tag -d tagname 来删除标签。
+如果要推送某个标签到远程，可以使用命令git push origin tagname 。一次性推送所有尚未推送到远程的本地标签使用git push origin --tags。
+如果要删除一个已经推送到github的标签，首先应该在本地使用 git tag -d tagname 删除本地标签，然后使用 git push origin ：refs/tags/tagname命令删除github上的标签名称。
